@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Qui me connaît le mieux ?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f9f9f9; }
+    h1 { color: #2c3e50; }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+    input { padding: 10px; margin: 10px; font-size: 16px; width: 200px; }
+    .question { margin: 15px 0; }
+    .score { font-size: 20px; margin-top: 20px; color: #e67e22; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<h1>🎉 Qui me connaît le mieux ?</h1>
+
+<div id="step1">
+  <h2>Créer le profil du joueur principal</h2>
+  <input type="text" id="playerName" placeholder="Ton prénom" /><br>
+  <input type="text" id="favFood" placeholder="Plat préféré" /><br>
+  <input type="text" id="favColor" placeholder="Couleur favorite" /><br>
+  <button onclick="createProfile()">Créer le profil</button>
+</div>
+
+<div id="step2" class="hidden">
+  <h2>Entrer le code du joueur principal</h2>
+  <input type="text" id="codeInput" placeholder="Code unique" /><br>
+  <button onclick="startTest()">Commencer le test</button>
+</div>
+
+<div id="step3" class="hidden">
+  <h2 id="questionText"></h2>
+  <input type="text" id="answerInput" placeholder="Réponse" /><br>
+  <button onclick="submitAnswer()">Suivant</button>
+</div>
+
+<div id="step4" class="hidden">
+  <h2>🎁 Ouvre ton cadeau !</h2>
+  <p>Regarde cette publicité pour découvrir ton score !</p>
+  <button onclick="openGift()">Ouvrir le cadeau</button>
+</div>
+
+<div id="step5" class="hidden">
+  <h2>Résultat</h2>
+  <p id="scoreText" class="score"></p>
+  <button onclick="shareCode()">Partager et tester d'autres amis</button>
+</div>
+
+<script>
+  let profiles = {};
+  let currentTest = {};
+  let questions = ["Quel est son plat préféré ?", "Quelle est sa couleur favorite ?"];
+  let currentQ = 0;
+  let score = 0;
+
+  // Étape 1 : Création du profil
+  function createProfile() {
+    let name = document.getElementById("playerName").value;
+    let food = document.getElementById("favFood").value;
+    let color = document.getElementById("favColor").value;
+
+    if(!name || !food || !color) { alert("Veuillez remplir tous les champs !"); return; }
+
+    let code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    profiles[code] = {name, food, color};
+    alert("Profil créé ! Code unique : " + code);
+
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+  }
+
+  // Étape 2 : Démarrer le test
+  function startTest() {
+    let code = document.getElementById("codeInput").value.toUpperCase();
+    if(!profiles[code]) { alert("Code invalide !"); return; }
+
+    currentTest = {code, answers: []};
+    currentQ = 0;
+    score = 0;
+
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step3").classList.remove("hidden");
+    document.getElementById("questionText").innerText = questions[currentQ];
+  }
+
+  // Étape 3 : Soumettre la réponse
+  function submitAnswer() {
+    let ans = document.getElementById("answerInput").value;
+    if(!ans) { alert("Réponse vide !"); return; }
+
+    currentTest.answers.push(ans);
+
+    let profile = profiles[currentTest.code];
+    if((currentQ === 0 && ans.toLowerCase() === profile.food.toLowerCase()) ||
+       (currentQ === 1 && ans.toLowerCase() === profile.color.toLowerCase())) {
+      score += 50;
+    }
+
+    currentQ++;
+    if(currentQ < questions.length) {
+      document.getElementById("answerInput").value = "";
+      document.getElementById("questionText").innerText = questions[currentQ];
+    } else {
+      document.getElementById("step3").classList.add("hidden");
+      document.getElementById("step4").classList.remove("hidden");
+    }
+  }
+
+  // Étape 4 : Ouvrir le cadeau (lien Linkvertise)
+  function openGift() {
+    window.open("https://direct-link.net/2980340/hiRPFKcy5x85", "_blank");
+    // Afficher le score après le clic
+    document.getElementById("step4").classList.add("hidden");
+    document.getElementById("step5").classList.remove("hidden");
+    document.getElementById("scoreText").innerText = "Vous connaissez " + profiles[currentTest.code].name + " à " + score + "% ! 🎉";
+  }
+
+  // Étape 5 : Partager le code pour viralité
+  function shareCode() {
+    alert("Partage ce code avec tes amis pour qu'ils te testent : " + currentTest.code);
+    document.getElementById("step5").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+    document.getElementById("codeInput").value = "";
+  }
+</script>
+
+</body>
+</html>
